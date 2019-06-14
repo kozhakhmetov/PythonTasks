@@ -1,12 +1,8 @@
-from flask import Flask
-from config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask import Blueprint
+from flask_restful import Api
+from api.views.Hell import Hello
 
-app = Flask(__name__)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+api_bp = Blueprint('api', __name__)
+api_app = Api(api_bp)
 
 from api import routes
-

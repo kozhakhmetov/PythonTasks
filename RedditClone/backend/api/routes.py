@@ -1,7 +1,5 @@
-from api import app
+from api import api_app
+from api.views.Hell import Hello
 
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return "Hello, World!"
+api_app.add_resource(Hello, '/hello/')
