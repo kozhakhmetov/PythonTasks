@@ -1,6 +1,7 @@
 from flask import Flask
+from flask_marshmallow import Marshmallow
 
-from api.models import db
+from api.models import db, ma
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -17,6 +18,8 @@ def create_app():
     jwt = JWTManager(app)
     with app.app_context():
         db.init_app(app)
+        #db.create_all()
+        ma.init_app(app)
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):

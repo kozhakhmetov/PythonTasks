@@ -26,14 +26,31 @@ class UserRegistration(Resource):
 
         try:
             new_user.save_to_db()
-            refresh_token = create_refresh_token(identity=new_user.id)
+            refresh_token = create_refresh_token(identity={'user_id': str(new_user.id),
+                                                           'username': new_user.username})
             return {
                 'message': 'User {} was created'.format(data['username']),
                 'token': refresh_token
             }
         except Exception as e:
+            return {'message': 'Something went wrong' + str(e)}, 500
+
+    @jwt_refresh_token_required
+    def delete(self):
+
+        jti = get_raw_jwt()['jti']
+        try:
+            revoked_token = RevokedTokenModel(jti=jti)
+            revoked_token.add()
+        except Exception as e:
             return {'message': 'Something went wrong'}, 500
 
+        current_user = get_jwt_identity()
+        try:
+            User.delete_user(current_user)
+            return {'message' : 'user deleted'}
+        except Exception as e:
+            return {'message': 'Something weasdnt wrong' + str(e)}, 500
 
 class UserLogin(Resource):
     def post(self):
